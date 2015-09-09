@@ -20,7 +20,7 @@ public class Inventory : MonoBehaviour {
 		{
 			if(GetComponent<ItemSpawner>().ObjectInventory[i] <= 0)
 			{
-				slots[i].transform.GetChild (0).gameObject.GetComponent<SpriteRenderer>().color = new Color(255, 255, 255, 0.25f);
+				slots[i].transform.GetChild (0).gameObject.GetComponent<SpriteRenderer>().color = new Color(255, 255, 255, 0.05f);
 			}
 
 			else
@@ -45,6 +45,12 @@ public class Inventory : MonoBehaviour {
 				else
 					slots[i].SetActive (false);
 			}
+
+			if(!currentSlot.activeSelf)
+				currentSlot.SetActive (true);
+			else
+				currentSlot.SetActive (false);
+
 		}
 		GetComponent<RectTransform> ().position = player.transform.position - new Vector3 (0,0,1);
 		currentSlot.transform.position =  slots[GetComponent<ItemSpawner>().objectIndex].transform.position;

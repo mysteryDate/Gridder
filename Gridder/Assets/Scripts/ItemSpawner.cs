@@ -26,6 +26,7 @@ public class ItemSpawner : MonoBehaviour {
 
 		createItem ();
 		holding = true;
+		CurrentObject.transform.position = transform.position;
 	}
 	
 	// Update is called once per frame
@@ -34,7 +35,12 @@ public class ItemSpawner : MonoBehaviour {
 		camPos = -cam.transform.position.z;
 		if(holding && !gotNothing)
 		{
-			CurrentObject.transform.position = Camera.main.ScreenToWorldPoint (new Vector3(Input.mousePosition.x, Input.mousePosition.y, camPos));
+			if(Input.GetJoystickNames().Length == 0)
+				CurrentObject.transform.position = Camera.main.ScreenToWorldPoint (new Vector3(Input.mousePosition.x, Input.mousePosition.y, camPos));
+			else
+			{
+				CurrentObject.transform.position += new Vector3(Input.GetAxis ("HorizontalR")/3, Input.GetAxis ("VerticalR")/3, 0);
+			}
 			CurrentObject.transform.eulerAngles = heldRotation; 
 			layerCheck();
 
@@ -60,10 +66,25 @@ public class ItemSpawner : MonoBehaviour {
 			Vector2 itemDir = new Vector2(Input.GetAxis ("HorizontalR"), Input.GetAxis ("VerticalR") );
 			if(itemDir.magnitude > 0)
 			{
-				print (itemDir);
+				float rad = (Mathf.Atan2 (itemDir.x, itemDir.y)) * Mathf.Rad2Deg;
+				if(rad < 0)
+					rad = 360 + rad;
+
+				float radialItemArea = 360/Objects.Length;
+				for(int i = 0; i < Objects.Length; i++)
+				{
+					if(rad > (radialItemArea * i) - (radialItemArea/2) && rad < (radialItemArea * i) + (radialItemArea/2))
+					{
+						objectIndex = i;
+						Destroy (CurrentObject);
+						createItem();
+					}
+				}
 			}
 
-			if(Input.GetMouseButtonDown(0) && ObjectPlacementCollision)
+
+
+			if((Input.GetMouseButtonDown(0) || Input.GetKey(KeyCode.Joystick1Button1)) && ObjectPlacementCollision)
 			{
 				deployItem();
 

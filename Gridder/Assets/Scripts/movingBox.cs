@@ -13,7 +13,7 @@ public class movingBox : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 
-		GetComponent<Rigidbody2D>().AddForce (transform.right * moveSpeed * Time.deltaTime);
-	
+		if(GetComponent<Rigidbody2D>().velocity.x < 10)
+			GetComponent<Rigidbody2D>().AddForce (transform.right * moveSpeed * Time.deltaTime);
 	}
 }
