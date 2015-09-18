@@ -17,6 +17,7 @@ public class ItemSpawner : MonoBehaviour {
 	private bool gotNothing;
 	public LayerMask myLayer;
 	private bool ObjectPlacementCollision;
+	private Vector3 objectPos;
 
 
 
@@ -39,7 +40,16 @@ public class ItemSpawner : MonoBehaviour {
 				CurrentObject.transform.position = Camera.main.ScreenToWorldPoint (new Vector3(Input.mousePosition.x, Input.mousePosition.y, camPos));
 			else
 			{
-				CurrentObject.transform.position += new Vector3(Input.GetAxis ("HorizontalR")/3, Input.GetAxis ("VerticalR")/3, 0);
+				if(!GetComponent<Inventory>().InventoryActive)
+				{
+					objectPos += new Vector3(Input.GetAxis ("HorizontalR")/3, Input.GetAxis ("VerticalR")/3, 0);
+					CurrentObject.transform.position = transform.position + objectPos; 
+				}
+				else
+				{
+					objectPos = new Vector3(0,2,0);
+					heldRotation = new Vector3(0,0,0);
+				}
 			}
 			CurrentObject.transform.eulerAngles = heldRotation; 
 			layerCheck();
@@ -73,7 +83,7 @@ public class ItemSpawner : MonoBehaviour {
 				float radialItemArea = 360/Objects.Length;
 				for(int i = 0; i < Objects.Length; i++)
 				{
-					if(rad > (radialItemArea * i) - (radialItemArea/2) && rad < (radialItemArea * i) + (radialItemArea/2))
+					if(rad > (radialItemArea * i) - (radialItemArea/2) && rad < (radialItemArea * i) + (radialItemArea/2) && GetComponent<Inventory>().InventoryActive)
 					{
 						objectIndex = i;
 						Destroy (CurrentObject);
@@ -106,9 +116,9 @@ public class ItemSpawner : MonoBehaviour {
 
 			}
 
-			if(Input.GetKey(KeyCode.H))
+			if(Input.GetButton("RotateL"))
 				heldRotation += new Vector3(0,0,5);
-			else if(Input.GetKey(KeyCode.K))
+			else if(Input.GetButton("RotateR"))
 				heldRotation += new Vector3(0,0,-5);
 		}	
 
@@ -205,7 +215,7 @@ public class ItemSpawner : MonoBehaviour {
 
 	void createItem()
 	{
-		CurrentObject = Instantiate (Objects[objectIndex], Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, 40) ), Quaternion.identity) as GameObject;
+		CurrentObject = Instantiate (Objects[objectIndex], transform.position + new Vector3(0, 2 , 0), Quaternion.identity) as GameObject;
 		CurrentObject.GetComponent<SpriteRenderer> ().color = new Color (1, 1, 1, 0.2f);
 		CurrentObject.GetComponent<Collider2D>().enabled = false;
 		if(CurrentObject.GetComponent<Rigidbody2D> () != null)

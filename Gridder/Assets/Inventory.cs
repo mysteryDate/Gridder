@@ -7,6 +7,7 @@ public class Inventory : MonoBehaviour {
 	public GameObject player;
 	public GameObject[] slots;
 	public GameObject currentSlot;
+	public bool InventoryActive;
 
 	// Use this for initialization
 	void Start () {
@@ -50,6 +51,8 @@ public class Inventory : MonoBehaviour {
 				currentSlot.SetActive (true);
 			else
 				currentSlot.SetActive (false);
+
+			InventoryActive = !InventoryActive;
 
 		}
 		GetComponent<RectTransform> ().position = player.transform.position - new Vector3 (0,0,1);
